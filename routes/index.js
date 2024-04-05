@@ -17,5 +17,19 @@ router.get('/mod/:jarName', (req, res) => {
   fileStream.pipe(res);
 });
 
+router.get('/mods', (req, res) => {
+  fs.readdir("./mods", (err, files) => {
+    if (err) {
+      return res.status(500).send('Error reading directory');
+    }
+
+    res.json(files
+        .filter(file => file.endsWith(".jar"))
+        .map(fileName => {
+          return fileName.replace(".jar", "");
+        }));
+  });
+})
+
 
 module.exports = router;
