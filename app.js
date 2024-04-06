@@ -11,7 +11,6 @@ const allowLocalhostOnly = (req, res, next) => {
     }
 };
 
-// Use the middleware to restrict requests
 app.use(allowLocalhostOnly);
 
 app.listen(3000);
