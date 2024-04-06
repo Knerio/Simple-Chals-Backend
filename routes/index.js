@@ -3,10 +3,23 @@ const router = express.Router();
 const {Readable} = require("stream")
 require('dotenv').config();
 
+router.get("/wrapper/latest", async (req, res) => {
+    const packagesURL = `https://api.github.com/users/Knerio/packages/maven/de.derioo.chals.api/versions`;
+
+    await downloadLatestJar(packagesURL, "api", "de.derioo.chals", res);
+})
+
 router.get('/latest/:name', async (req, res) => {
     const name = req.params.name;
 
-    const response = await fetch(`https://api.github.com/users/Knerio/packages/maven/de.derioo.mods.${name}/versions`, {
+    const packagesURL = `https://api.github.com/users/Knerio/packages/maven/de.derioo.mods.${name}/versions`;
+
+    await downloadLatestJar(packagesURL, name, "de.derioo.mods", res);
+
+});
+
+async function downloadLatestJar(packagesURL, name, path, res) {
+    const response = await fetch(packagesURL, {
         headers: {
             'Authorization': 'Bearer ' + process.env.GITHUB_TOKEN,
         }
@@ -26,7 +39,7 @@ router.get('/latest/:name', async (req, res) => {
     }, {"updated_at": 0});
 
     console.log(latestPackage.name)
-    const latestJarURL = `https://maven.pkg.github.com/Knerio/Simple-Chals-Server/de.derioo.mods.${name}/${latestPackage.name}/${name}-${latestPackage.name}.jar`
+    const latestJarURL = `https://maven.pkg.github.com/Knerio/Simple-Chals-Server/${path}.${name}/${latestPackage.name}/${name}-${latestPackage.name}.jar`
 
     const jarResponse = await fetch(latestJarURL, {
         method: 'GET',
@@ -40,8 +53,7 @@ router.get('/latest/:name', async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename="${name}.jar"`);
     res.setHeader('Content-Type', 'application/java-archive');
     Readable.fromWeb(jarResponse.body).pipe(res);
-
-});
+}
 
 router.get('/mods', async (req, res) => {
     try {
