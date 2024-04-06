@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
 const axios = require('axios');
-const cheerio = require('cheerio');
 require('dotenv').config();
 
 router.get('/latest/:name', async (req, res) => {
@@ -37,8 +35,7 @@ router.get('/latest/:name', async (req, res) => {
     }
 
   }
-  console.log(name)
-  console.log(latest)
+
   const url = `https://maven.pkg.github.com/Knerio/Simple-Chals-Server/de.derioo.mods.${name}/${latest}/${name}-${latest}.jar`
 
   const response2 = await axios({
