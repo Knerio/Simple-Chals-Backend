@@ -27,7 +27,7 @@ async function downloadLatestJar(packagesURL, name, path, res) {
 
 
     if (!response.ok) {
-        throw new Error(`Failed to fetch packages ${await response.json()}`);
+        throw new Error(`Failed to fetch packages ${JSON.stringify(await response.json())}`);
     }
 
     const data = await response.json();
